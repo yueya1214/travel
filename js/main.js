@@ -7,6 +7,17 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 平滑滚动到锚点
     setupSmoothScroll();
+    
+    // 设置非遗文化弹窗
+    setupCultureModals();
+    
+    // 设置美食模态窗口
+    setupFoodModal();
+    
+    // 如果在明信片页面，初始化明信片生成器
+    if (document.getElementById('postcardForm')) {
+        initPostcardGenerator();
+    }
 });
 
 /**
@@ -153,4 +164,63 @@ window.addEventListener('scroll', function() {
             section.classList.add('visible');
         }
     });
-}); 
+});
+
+/**
+ * 设置非遗文化弹窗功能
+ */
+function setupCultureModals() {
+    // 禅宗文化按钮
+    setupModalButton('a.btn-sm:nth-child(1)', '#zenHistoryModal', '历史渊源');
+    setupModalButton('a.btn-sm:nth-child(2)', '#zenTemplesModal', '禅宗寺庙');
+    
+    // 红色文化按钮
+    setupModalButton('a.btn-sm:nth-child(1)', '#redSitesModal', '革命遗址');
+    setupModalButton('a.btn-sm:nth-child(2)', '#redPeopleModal', '人物事迹');
+    
+    // 明月山歌按钮
+    setupModalButton('a.btn-sm:nth-child(1)', '#listenSongModal', '聆听山歌');
+    setupModalButton('a.btn-sm:nth-child(2)', '#songListModal', '代表曲目');
+    
+    // 竹编工艺按钮
+    setupModalButton('a.btn-sm:nth-child(1)', '#bambooProcessModal', '工艺流程');
+    setupModalButton('a.btn-sm:nth-child(2)', '#bambooWorksModal', '代表作品');
+    
+    // 辅助函数：设置按钮监听
+    function setupModalButton(selector, modalId, text) {
+        const allButtons = document.querySelectorAll(selector);
+        const modalEl = document.querySelector(modalId);
+        
+        if (!modalEl) return;
+        
+        const modal = new bootstrap.Modal(modalEl);
+        
+        allButtons.forEach(button => {
+            // 确认按钮文本内容是预期的
+            if (button.textContent.trim() === text) {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    modal.show();
+                });
+            }
+        });
+    }
+}
+
+/**
+ * 设置美食模态窗口
+ */
+function setupFoodModal() {
+    const viewAllFoodBtn = document.getElementById('viewAllFoodBtn');
+    if (!viewAllFoodBtn) return;
+    
+    const foodModalEl = document.getElementById('allFoodModal');
+    if (!foodModalEl) return;
+    
+    const foodModal = new bootstrap.Modal(foodModalEl);
+    
+    viewAllFoodBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        foodModal.show();
+    });
+} 
