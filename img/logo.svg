@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- 月亮背景圆 -->
+  <circle cx="50" cy="50" r="45" fill="#2c7744" />
+  
+  <!-- 月亮 -->
+  <path d="M50 5
+           a45 45 0 0 1 0 90
+           a35 35 0 0 0 0 -70
+           a35 35 0 0 1 0 -20
+           z" 
+        fill="#e3b23c" />
+  
+  <!-- 山峰剪影 -->
+  <path d="M5 80
+           L30 40
+           L45 60
+           L70 25
+           L95 80
+           z" 
+        fill="#0d3b1f" />
+  
+  <!-- 温泉水纹 -->
+  <path d="M30 75
+           q5 -5 10 0
+           q5 5 10 0
+           q5 -5 10 0
+           q5 5 10 0" 
+        stroke="#007bff"
+        stroke-width="3"
+        fill="none" />
+</svg> 

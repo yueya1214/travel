@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="宜春手绘地图 - 探索明月山、温汤温泉、袁山公园等景点路线图">
+    <meta name="keywords" content="宜春旅游,明月山地图,温汤温泉路线,袁山公园指南">
+    <title>宜春手绘地图 - 月满宜春·温暖一生</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .map-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .map-svg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .map-point {
+            cursor: pointer;
+            transition: transform 0.3s ease, fill 0.3s ease;
+        }
+        
+        .map-point:hover {
+            transform: scale(1.2);
+            fill: var(--accent-color);
+        }
+        
+        .map-info {
+            display: none;
+            position: absolute;
+            background: rgba(255,255,255,0.9);
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            max-width: 250px;
+            z-index: 10;
+        }
+        
+        .map-info.active {
+            display: block;
+        }
+        
+        .map-legend {
+            background: rgba(255,255,255,0.9);
+            border-radius: 5px;
+            padding: 15px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            max-width: 200px;
+            z-index: 5;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            margin-right: 8px;
+            border-radius: 3px;
+        }
+        
+        .download-section {
+            margin: 2rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .map-legend {
+                position: static;
+                margin-top: 15px;
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container">
+                <a class="navbar-brand" href="index.html">
+                    <img src="img/logo.svg" alt="宜春旅游" width="30" height="30" class="d-inline-block align-top">
+                    月满宜春·温暖一生
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html#attractions">景区导览</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html#culture">非遗文化</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html#food">美食地图</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html#seasons">四季玩法</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="map.html">手绘地图</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="postcard.html">明信片生成</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="py-5">
+            <div class="container">
+                <h1 class="section-title text-center mb-5">宜春手绘地图</h1>
+                
+                <div class="row mb-4">
+                    <div class="col-md-8 mx-auto">
+                        <p class="lead text-center">探索宜春的主要景点和路线，规划您的完美旅程。</p>
+                    </div>
+                </div>
+                
+                <div class="map-container">
+                    <!-- 手绘地图 SVG -->
+                    <svg class="map-svg" viewBox="0 0 1000 800" xmlns="http://www.w3.org/2000/svg">
+                        <!-- 背景 -->
+                        <rect width="1000" height="800" fill="#e8f4ea" />
+                        
+                        <!-- 山脉和地形 -->
+                        <path d="M100,600 Q250,400 400,550 Q550,300 700,500 Q850,350 950,600 L950,800 L100,800 Z" fill="#c3e6cb" />
+                        <path d="M50,650 Q200,500 350,600 Q500,400 650,550 Q800,450 900,650 L900,800 L50,800 Z" fill="#a3d7af" />
+                        
+                        <!-- 水系 -->
+                        <path class="water-flow" d="M300,100 Q400,150 350,250 Q300,350 400,400 Q500,450 450,550 Q400,650 500,700 L500,800 L200,800 L200,150 Z" fill="#a8d8ff" />
+                        
+                        <!-- 城市和道路 -->
+                        <circle cx="500" cy="300" r="40" fill="#f8d7da" stroke="#e77681" stroke-width="2" />
+                        <text x="500" y="305" text-anchor="middle" fill="#721c24" font-size="14" font-weight="bold">宜春市</text>
+                        
+                        <path d="M500,340 L500,400 L350,550" fill="none" stroke="#6c757d" stroke-width="4" stroke-dasharray="5,5" />
+                        <path d="M500,340 L650,450 L700,500" fill="none" stroke="#6c757d" stroke-width="4" stroke-dasharray="5,5" />
+                        <path d="M500,340 L600,250 L680,200" fill="none" stroke="#6c757d" stroke-width="4" stroke-dasharray="5,5" />
+                        
+                        <!-- 景点标记 -->
+                        <!-- 明月山 -->
+                        <g class="map-point" data-name="明月山" data-info="国家5A级景区，素有'江南第一仙山'之称，以奇特的石林地貌和丰富的生物资源闻名。">
+                            <circle cx="680" cy="200" r="15" fill="#28a745" />
+                            <text x="680" y="205" text-anchor="middle" fill="white" font-size="12">山</text>
+                        </g>
+                        
+                        <!-- 温汤温泉 -->
+                        <g class="map-point" data-name="温汤温泉" data-info="千年古泉，素有'天下第七泉'之称，具有很高的医疗保健价值。每年冬季是最佳泡汤时节。">
+                            <circle cx="700" cy="500" r="15" fill="#17a2b8" />
+                            <text x="700" y="505" text-anchor="middle" fill="white" font-size="12">泉</text>
+                        </g>
+                        
+                        <!-- 袁山公园 -->
+                        <g class="map-point" data-name="袁山公园" data-info="宜春市区最大的城市公园，四季景色宜人，是市民休闲游玩的好去处。特别是秋季，满园红叶，景色迷人。">
+                            <circle cx="350" cy="550" r="15" fill="#28a745" />
+                            <text x="350" y="555" text-anchor="middle" fill="white" font-size="12">园</text>
+                        </g>
+                        
+                        <!-- 宜春博物馆 -->
+                        <g class="map-point" data-name="宜春博物馆" data-info="收藏了大量宜春地区的历史文物，展示了宜春悠久的历史文化，是了解宜春历史的重要场所。">
+                            <circle cx="480" cy="350" r="15" fill="#6f42c1" />
+                            <text x="480" y="355" text-anchor="middle" fill="white" font-size="12">博</text>
+                        </g>
+                        
+                        <!-- 龙宫风景区 -->
+                        <g class="map-point" data-name="龙宫风景区" data-info="位于明月山腹地，集山、水、洞、瀑布于一体，是夏季避暑的好去处。">
+                            <circle cx="600" cy="250" r="15" fill="#28a745" />
+                            <text x="600" y="255" text-anchor="middle" fill="white" font-size="12">龙</text>
+                        </g>
+                        
+                        <!-- 公共设施标记 -->
+                        <!-- 停车场 -->
+                        <g>
+                            <rect x="660" cy="230" width="20" height="20" fill="#6c757d" />
+                            <text x="670" y="245" text-anchor="middle" fill="white" font-size="12">P</text>
+                        </g>
+                        
+                        <g>
+                            <rect x="680" cy="530" width="20" height="20" fill="#6c757d" />
+                            <text x="690" y="545" text-anchor="middle" fill="white" font-size="12">P</text>
+                        </g>
+                        
+                        <!-- 厕所 -->
+                        <g>
+                            <rect x="700" cy="220" width="20" height="20" fill="#dc3545" />
+                            <text x="710" y="235" text-anchor="middle" fill="white" font-size="12">厕</text>
+                        </g>
+                        
+                        <g>
+                            <rect x="720" cy="500" width="20" height="20" fill="#dc3545" />
+                            <text x="730" y="515" text-anchor="middle" fill="white" font-size="12">厕</text>
+                        </g>
+                        
+                        <!-- 信息点 -->
+                        <g>
+                            <circle cx="670" cy="200" r="8" fill="#007bff" />
+                            <text x="670" y="204" text-anchor="middle" fill="white" font-size="12">i</text>
+                        </g>
+                        
+                        <g>
+                            <circle cx="690" cy="500" r="8" fill="#007bff" />
+                            <text x="690" y="504" text-anchor="middle" fill="white" font-size="12">i</text>
+                        </g>
+                    </svg>
+                    
+                    <!-- 地图信息弹窗 -->
+                    <div class="map-info" id="mapInfo">
+                        <h5 id="infoTitle">景点名称</h5>
+                        <p id="infoContent">景点描述</p>
+                    </div>
+                    
+                    <!-- 地图图例 -->
+                    <div class="map-legend">
+                        <h6 class="mb-3">图例</h6>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #28a745;"></div>
+                            <span>自然景观</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #17a2b8;"></div>
+                            <span>温泉</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #6f42c1;"></div>
+                            <span>文化场所</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #6c757d;"></div>
+                            <span>停车场</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #dc3545;"></div>
+                            <span>厕所</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="download-section text-center">
+                    <h3 class="mb-3">下载离线地图</h3>
+                    <p>提供PDF版手绘地图，方便您离线使用</p>
+                    <a href="#" class="btn btn-outline-primary">下载PDF版地图</a>
+                </div>
+                
+                <div class="route-section mt-5">
+                    <h3 class="text-center mb-4">推荐徒步路线</h3>
+                    
+                    <div class="row">
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h4 class="card-title">明月山登山路线</h4>
+                                    <div class="mb-2">
+                                        <span class="text-warning">★★★★</span>
+                                        <span class="badge bg-danger ms-2">难度:高</span>
+                                    </div>
+                                    <p class="card-text">从山脚到山顶全程约6公里，徒步时间约3小时，沿途可观赏石林景观和森林风光。</p>
+                                    <ul class="list-unstyled">
+                                        <li><small>适合季节: 春、秋</small></li>
+                                        <li><small>推荐装备: 登山鞋、登山杖</small></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h4 class="card-title">温汤古镇漫步</h4>
+                                    <div class="mb-2">
+                                        <span class="text-warning">★★</span>
+                                        <span class="badge bg-success ms-2">难度:低</span>
+                                    </div>
+                                    <p class="card-text">古镇内步行约2公里，可参观古井、百年老街和温泉博物馆，感受千年温泉文化。</p>
+                                    <ul class="list-unstyled">
+                                        <li><small>适合季节: 四季皆宜</small></li>
+                                        <li><small>推荐装备: 舒适鞋履、饮用水</small></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-4">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h4 class="card-title">袁山公园环园路线</h4>
+                                    <div class="mb-2">
+                                        <span class="text-warning">★★★</span>
+                                        <span class="badge bg-warning text-dark ms-2">难度:中</span>
+                                    </div>
+                                    <p class="card-text">环园一周约4公里，途经林荫小道、湖边栈道和观景台，秋季枫叶红遍全园尤为壮观。</p>
+                                    <ul class="list-unstyled">
+                                        <li><small>适合季节: 春、秋</small></li>
+                                        <li><small>推荐装备: 防晒装备、相机</small></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>关于我们</h5>
+                    <p>宜春旅游网致力于展示宜春独特的自然风光和人文景观，为游客提供全面的旅游信息。</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>联系方式</h5>
+                    <p>地址：江西省宜春市袁州区</p>
+                    <p>电话：0795-XXXXXXXX</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>关注我们</h5>
+                    <div class="social-links">
+                        <a href="#" class="text-white me-2"><i class="bi bi-wechat"></i></a>
+                        <a href="#" class="text-white me-2"><i class="bi bi-weibo"></i></a>
+                        <a href="#" class="text-white"><i class="bi bi-tiktok"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p class="mb-0">&copy; 2023 宜春旅游网 版权所有</p>
+                <small class="dialect-trigger">点击这里听方言彩蛋</small>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // 地图交互
+        document.addEventListener('DOMContentLoaded', function() {
+            const mapPoints = document.querySelectorAll('.map-point');
+            const mapInfo = document.getElementById('mapInfo');
+            const infoTitle = document.getElementById('infoTitle');
+            const infoContent = document.getElementById('infoContent');
+            
+            // 为每个景点添加点击事件
+            mapPoints.forEach(point => {
+                point.addEventListener('click', function(e) {
+                    // 获取景点信息
+                    const name = this.getAttribute('data-name');
+                    const info = this.getAttribute('data-info');
+                    
+                    // 更新信息面板
+                    infoTitle.textContent = name;
+                    infoContent.textContent = info;
+                    
+                    // 计算位置并显示信息面板
+                    const pointRect = this.getBoundingClientRect();
+                    const mapContainer = document.querySelector('.map-container');
+                    const containerRect = mapContainer.getBoundingClientRect();
+                    
+                    // 相对于地图容器定位
+                    mapInfo.style.left = (pointRect.left - containerRect.left + 30) + 'px';
+                    mapInfo.style.top = (pointRect.top - containerRect.top - 20) + 'px';
+                    
+                    // 显示信息
+                    mapInfo.classList.add('active');
+                    
+                    // 阻止冒泡
+                    e.stopPropagation();
+                });
+            });
+            
+            // 点击地图外区域关闭信息面板
+            document.addEventListener('click', function() {
+                mapInfo.classList.remove('active');
+            });
+            
+            // 防止点击信息面板时关闭
+            mapInfo.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        });
+    </script>
+</body>
+</html> 

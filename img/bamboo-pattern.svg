@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 10" width="100" height="10">
+  <!-- 竹节图案 -->
+  <rect x="0" y="3" width="10" height="4" rx="2" fill="#2c7744" opacity="0.5" />
+  <rect x="12" y="3" width="8" height="4" rx="2" fill="#2c7744" opacity="0.5" />
+  <rect x="22" y="3" width="12" height="4" rx="2" fill="#2c7744" opacity="0.5" />
+  <rect x="36" y="3" width="8" height="4" rx="2" fill="#2c7744" opacity="0.5" />
+  <rect x="46" y="3" width="10" height="4" rx="2" fill="#2c7744" opacity="0.5" />
+  <rect x="58" y="3" width="8" height="4" rx="2" fill="#2c7744" opacity="0.5" />
+  <rect x="68" y="3" width="12" height="4" rx="2" fill="#2c7744" opacity="0.5" />
+  <rect x="82" y="3" width="8" height="4" rx="2" fill="#2c7744" opacity="0.5" />
+  <rect x="92" y="3" width="8" height="4" rx="2" fill="#2c7744" opacity="0.5" />
+  
+  <!-- 连接线条 -->
+  <line x1="0" y1="5" x2="100" y2="5" stroke="#2c7744" stroke-width="0.5" opacity="0.3" />
+</svg> 
