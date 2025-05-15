@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="宜春区县旅游宣传 - 探索宜春各区县的自然景观和人文风貌">
+    <meta name="keywords" content="宜春旅游,宜春区县,高安市,袁州区,万载县,宜丰县,奉新县,铜鼓县,靖安县,上高县,樟树市,丰城市">
+    <title>宜春区县旅游 - 月满宜春·温暖一生</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .chinese-title {
+            position: relative;
+            text-align: center;
+            padding: 2rem 0;
+            margin-bottom: 3rem;
+        }
+        
+        .chinese-title::before,
+        .chinese-title::after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            width: 150px;
+            height: 2px;
+            background-image: url('img/chinese-pattern.svg');
+            background-repeat: repeat-x;
+        }
+        
+        .chinese-title::before {
+            left: 20%;
+        }
+        
+        .chinese-title::after {
+            right: 20%;
+        }
+        
+        .district-image {
+            height: 300px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .district-image:hover {
+            transform: scale(1.02);
+            cursor: pointer;
+        }
+        
+        .district-info {
+            padding: 1.5rem;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            margin-top: 1rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .map-container {
+            height: 650px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .map-container svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .district-path {
+            fill: #e8f4ea;
+            stroke: #2c7744;
+            stroke-width: 1.5;
+            transition: fill 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .district-path:hover {
+            fill: #a3d7af;
+        }
+        
+        .district-label {
+            font-size: 14px;
+            font-weight: bold;
+            pointer-events: none;
+        }
+        
+        .district-modal .modal-body img {
+            width: 100%;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .chinese-title::before,
+            .chinese-title::after {
+                width: 60px;
+            }
+            
+            .chinese-title::before {
+                left: 10%;
+            }
+            
+            .chinese-title::after {
+                right: 10%;
+            }
+            
+            .map-container {
+                height: 450px;
+                margin-top: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container">
+                <a class="navbar-brand" href="index.html">
+                    <img src="img/logo.svg" alt="宜春旅游" width="30" height="30" class="d-inline-block align-top">
+                    月满宜春·温暖一生
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html#attractions">景区导览</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html#culture">非遗文化</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html#food">美食地图</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="index.html#seasons">四季玩法</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="map.html">手绘地图</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="postcard.html">明信片生成</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="districts.html">区县风光</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="container py-5">
+            <div class="chinese-title">
+                <h1 class="display-4 fw-bold">宜春区县风光</h1>
+            </div>
+            
+            <div class="row">
+                <!-- 左侧图片展示区 -->
+                <div class="col-lg-5">
+                    <div class="mb-5" id="gaoan-section">
+                        <img src="img/placeholder.jpg" alt="高安市千岛湖风光" class="district-image w-100" data-district="gaoan">
+                        <div class="district-info">
+                            <h3>高安·千岛湖</h3>
+                            <p>高安，位于江西省会南昌西南，距离南昌42公里，素有"赣西明珠"美誉。全市土地面积2439.33平方公里，人口90万，1993年撤县设市。高安千岛湖是当地著名的休闲度假胜地，湖区碧波荡漾，岛屿星罗棋布。</p>
+                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#gaoanModal">了解更多</button>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-5" id="yuanzhou-section">
+                        <img src="img/placeholder.jpg" alt="袁州区文化景点" class="district-image w-100" data-district="yuanzhou">
+                        <div class="district-info">
+                            <h3>袁州·人文风光</h3>
+                            <p>袁州区位于宜春市域南部，地处赣江支流袁河上游，风景秀丽，历史文化底蕴深厚。袁州区是宜春市政治、经济、文化中心，拥有秀美的袁山公园、历史悠久的秀江书院等人文景观，是探索宜春历史文化的重要窗口。</p>
+                            <button class="btn btn-sm btn-outline-primary" data-bs-toggle="modal" data-bs-target="#yuanzhouModal">了解更多</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 右侧地图区域 -->
+                <div class="col-lg-7">
+                    <div class="map-container">
+                        <svg viewBox="0 0 800 800" xmlns="http://www.w3.org/2000/svg">
+                            <!-- 宜春市地图轮廓，这里使用简化的形状代表 -->
+                            <!-- 袁州区 -->
+                            <path class="district-path" d="M400,350 L450,300 L500,330 L520,390 L480,430 L420,410 L380,380 Z" 
+                                  data-district="yuanzhou" data-bs-toggle="modal" data-bs-target="#yuanzhouModal"></path>
+                            <text x="440" y="370" class="district-label" text-anchor="middle">袁州区</text>
+                            
+                            <!-- 高安市 -->
+                            <path class="district-path" d="M510,330 L570,310 L620,350 L605,420 L550,440 L520,390 Z" 
+                                  data-district="gaoan" data-bs-toggle="modal" data-bs-target="#gaoanModal"></path>
+                            <text x="570" y="370" class="district-label" text-anchor="middle">高安市</text>
+                            
+                            <!-- 奉新县 -->
+                            <path class="district-path" d="M340,280 L400,300 L450,300 L400,350 L350,330 Z" 
+                                  data-district="fengxin" data-bs-toggle="modal" data-bs-target="#fengxinModal"></path>
+                            <text x="380" y="320" class="district-label" text-anchor="middle">奉新县</text>
+                            
+                            <!-- 靖安县 -->
+                            <path class="district-path" d="M340,220 L400,240 L420,280 L340,280 Z" 
+                                  data-district="jingan" data-bs-toggle="modal" data-bs-target="#jinganModal"></path>
+                            <text x="380" y="250" class="district-label" text-anchor="middle">靖安县</text>
+                            
+                            <!-- 铜鼓县 -->
+                            <path class="district-path" d="M250,200 L340,220 L340,280 L280,270 Z" 
+                                  data-district="tonggu" data-bs-toggle="modal" data-bs-target="#tongguModal"></path>
+                            <text x="300" y="240" class="district-label" text-anchor="middle">铜鼓县</text>
+                            
+                            <!-- 宜丰县 -->
+                            <path class="district-path" d="M280,270 L340,280 L350,330 L320,370 L260,320 Z" 
+                                  data-district="yifeng" data-bs-toggle="modal" data-bs-target="#yifengModal"></path>
+                            <text x="310" y="310" class="district-label" text-anchor="middle">宜丰县</text>
+                            
+                            <!-- 上高县 -->
+                            <path class="district-path" d="M260,320 L320,370 L350,450 L280,440 L240,380 Z" 
+                                  data-district="shanggao" data-bs-toggle="modal" data-bs-target="#shanggaoModal"></path>
+                            <text x="290" y="380" class="district-label" text-anchor="middle">上高县</text>
+                            
+                            <!-- 万载县 -->
+                            <path class="district-path" d="M350,450 L380,380 L420,410 L400,490 L330,500 Z" 
+                                  data-district="wanzai" data-bs-toggle="modal" data-bs-target="#wanzaiModal"></path>
+                            <text x="380" y="440" class="district-label" text-anchor="middle">万载县</text>
+                            
+                            <!-- 丰城市 -->
+                            <path class="district-path" d="M480,430 L520,390 L550,440 L540,500 L470,510 L430,480 Z" 
+                                  data-district="fengcheng" data-bs-toggle="modal" data-bs-target="#fengchengModal"></path>
+                            <text x="500" y="460" class="district-label" text-anchor="middle">丰城市</text>
+                            
+                            <!-- 樟树市 -->
+                            <path class="district-path" d="M400,490 L430,480 L470,510 L440,560 L390,540 Z" 
+                                  data-district="zhangshu" data-bs-toggle="modal" data-bs-target="#zhangshuModal"></path>
+                            <text x="420" y="520" class="district-label" text-anchor="middle">樟树市</text>
+                        </svg>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <h4 class="text-center">宜春市行政区划</h4>
+                        <p class="text-center">宜春市下辖1个区、7个县、2个县级市，点击地图可查看详情</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 区县详情模态窗口 -->
+    <!-- 高安市模态窗口 -->
+    <div class="modal fade district-modal" id="gaoanModal" tabindex="-1" aria-labelledby="gaoanModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="gaoanModalLabel">高安市旅游指南</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img src="img/placeholder.jpg" alt="高安市景点" class="img-fluid">
+                    <h4>高安市简介</h4>
+                    <p>高安市位于江西省中部，是宜春市代管的县级市。高安历史悠久，文化底蕴深厚，自然景观丰富多彩。</p>
+                    
+                    <h5>主要景点</h5>
+                    <ul>
+                        <li><strong>千岛湖风景区</strong> - 湖光山色，岛屿众多，是休闲度假的理想之地</li>
+                        <li><strong>高安古镇</strong> - 保存完好的古街巷和传统建筑，展现江西传统文化风貌</li>
+                        <li><strong>石脊风景区</strong> - 奇特的岩石地貌，有"小张家界"之称</li>
+                    </ul>
+                    
+                    <h5>当地特色</h5>
+                    <p>高安菜品以辣鲜为主，推荐尝试高安狗肉、炒粉、灯盏糕等特色美食。高安还是中国优质蔬菜基地，盛产各类时令蔬果。</p>
+                    
+                    <h5>交通信息</h5>
+                    <p>高安市距离南昌约42公里，可以从宜春市区乘坐长途汽车约1小时可达，也可以从南昌乘坐高铁或大巴前往。</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 袁州区模态窗口 -->
+    <div class="modal fade district-modal" id="yuanzhouModal" tabindex="-1" aria-labelledby="yuanzhouModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="yuanzhouModalLabel">袁州区旅游指南</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img src="img/placeholder.jpg" alt="袁州区景点" class="img-fluid">
+                    <h4>袁州区简介</h4>
+                    <p>袁州区是宜春市的中心城区，历史悠久，人文荟萃，自然景观与人文景观交相辉映，是了解宜春历史文化的窗口。</p>
+                    
+                    <h5>主要景点</h5>
+                    <ul>
+                        <li><strong>袁山公园</strong> - 宜春市区最大的城市公园，四季景色宜人</li>
+                        <li><strong>秀江书院</strong> - 始建于宋代的古代书院，是文化教育的重要历史见证</li>
+                        <li><strong>月亮湾水利风景区</strong> - 水上娱乐、垂钓休闲的好去处</li>
+                    </ul>
+                    
+                    <h5>人文活动</h5>
+                    <p>袁州区每年举办多项文化活动，包括明月山花会、禅宗文化节等，游客可以参与其中，体验当地丰富的文化生活。</p>
+                    
+                    <h5>美食推荐</h5>
+                    <p>袁州区集中了宜春的众多特色美食，推荐品尝宜春扎粉、宜春小笼包、温汤发糕等，位于城区的美食街汇集了各色当地小吃。</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 其他县市模态窗口 -->
+    <div class="modal fade district-modal" id="fengxinModal" tabindex="-1" aria-labelledby="fengxinModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="fengxinModalLabel">奉新县旅游指南</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img src="img/placeholder.jpg" alt="奉新县景点" class="img-fluid">
+                    <h4>奉新县简介</h4>
+                    <p>奉新县位于江西省宜春市东北部，是一个山清水秀、景色宜人的地方。这里有丰富的自然资源和深厚的历史文化底蕴。</p>
+                    
+                    <h5>主要景点</h5>
+                    <ul>
+                        <li><strong>罗霄山国家森林公园</strong> - 森林覆盖率高，空气清新，是避暑胜地</li>
+                        <li><strong>奉新古城</strong> - 保存完好的古城墙和古建筑，展现历史风貌</li>
+                        <li><strong>白水仙境景区</strong> - 以瀑布、清泉和奇石著称</li>
+                    </ul>
+                    
+                    <h5>当地特产</h5>
+                    <p>奉新县盛产山茶油、雪梨、白莲等农产品，同时也有丰富的竹制品和手工艺品。</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 其余县市模态窗口类似，此处省略... -->
+
+    <footer class="bg-dark text-white py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>关于我们</h5>
+                    <p>宜春旅游网致力于展示宜春独特的自然风光和人文景观，为游客提供全面的旅游信息。</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>联系方式</h5>
+                    <p>地址：江西省宜春市袁州区</p>
+                    <p>电话：18800100793</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>关注我们</h5>
+                    <div class="social-links">
+                        <a href="#" class="text-white me-2"><i class="bi bi-wechat"></i></a>
+                        <a href="#" class="text-white me-2"><i class="bi bi-weibo"></i></a>
+                        <a href="#" class="text-white"><i class="bi bi-tiktok"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p class="mb-0">&copy; 2025 bing </p>
+                <small class="dialect-trigger">点击这里听方言彩蛋</small>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 地图交互功能
+            const districtPaths = document.querySelectorAll('.district-path');
+            const districtImages = document.querySelectorAll('.district-image');
+            
+            // 鼠标悬停高亮效果
+            districtPaths.forEach(path => {
+                path.addEventListener('mouseover', function() {
+                    const districtName = this.getAttribute('data-district');
+                    highlightDistrict(districtName);
+                });
+                
+                path.addEventListener('mouseout', function() {
+                    resetHighlights();
+                });
+            });
+            
+            // 图片区域与地图联动
+            districtImages.forEach(image => {
+                image.addEventListener('mouseover', function() {
+                    const districtName = this.getAttribute('data-district');
+                    highlightDistrict(districtName);
+                });
+                
+                image.addEventListener('mouseout', function() {
+                    resetHighlights();
+                });
+            });
+            
+            // 高亮特定区县
+            function highlightDistrict(districtName) {
+                const targetPath = document.querySelector(`.district-path[data-district="${districtName}"]`);
+                if (targetPath) {
+                    targetPath.style.fill = '#7fc77f';
+                    targetPath.style.strokeWidth = '3';
+                }
+            }
+            
+            // 重置所有高亮
+            function resetHighlights() {
+                districtPaths.forEach(path => {
+                    path.style.fill = '';
+                    path.style.strokeWidth = '1.5';
+                });
+            }
+        });
+    </script>
+</body>
+</html> 

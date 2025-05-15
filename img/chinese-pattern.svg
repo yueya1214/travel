@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="300" height="10" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <pattern id="chinese-pattern" width="60" height="4" patternUnits="userSpaceOnUse">
+      <!-- 中式云纹图案 -->
+      <path d="M0,2 Q5,0 10,2 T20,2 T30,2 T40,2 T50,2 T60,2" stroke="#2c7744" stroke-width="1.5" fill="none"/>
+      <path d="M0,3 Q7.5,5 15,3 T30,3 T45,3 T60,3" stroke="#2c7744" stroke-width="1" fill="none"/>
+      <!-- 点缀元素 -->
+      <circle cx="10" cy="2" r="1" fill="#2c7744"/>
+      <circle cx="30" cy="2" r="1" fill="#2c7744"/>
+      <circle cx="50" cy="2" r="1" fill="#2c7744"/>
+    </pattern>
+  </defs>
+  
+  <rect width="300" height="4" fill="url(#chinese-pattern)"/>
+</svg> 
