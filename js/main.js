@@ -18,6 +18,8 @@ document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('postcardForm')) {
         initPostcardGenerator();
     }
+    
+
 });
 
 /**
@@ -149,6 +151,8 @@ function initPostcardGenerator() {
         reader.readAsDataURL(file);
     }
 }
+
+
 
 // 页面滚动效果
 window.addEventListener('scroll', function() {

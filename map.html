@@ -7,6 +7,7 @@
     <meta name="keywords" content="宜春旅游,明月山地图,温汤温泉路线,袁山公园指南">
     <title>宜春手绘地图 - 月满宜春·温暖一生</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="css/style.css">
     <style>
         .map-container {
@@ -16,49 +17,161 @@
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             margin-bottom: 2rem;
+            border: 3px solid #28a745;
+            padding: 10px;
+            background-color: #f9f9f9;
+            aspect-ratio: 5/4;
+            max-width: 1000px;
+            margin: 0 auto 2rem;
         }
         
         .map-svg {
             width: 100%;
-            height: auto;
+            height: 100%;
             display: block;
+            object-fit: contain;
+        }
+        
+        /* 添加地图边界样式 */
+        .map-boundary {
+            stroke: #007bff;
+            stroke-width: 4;
+            fill: none;
+            stroke-dasharray: 10, 5;
+        }
+        
+        .map-title-box {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: rgba(255,255,255,0.9);
+            padding: 8px 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-left: 4px solid #28a745;
+            z-index: 4;
+        }
+        
+        .map-title-box h4 {
+            margin: 0;
+            color: #333;
+            font-size: 16px;
         }
         
         .map-point {
             cursor: pointer;
-            transition: transform 0.3s ease, fill 0.3s ease;
+            transition: transform 0.3s ease;
         }
         
         .map-point:hover {
             transform: scale(1.2);
-            fill: var(--accent-color);
         }
         
+        .map-point:active {
+            transform: scale(0.95);
+        }
+        
+        .map-point-label {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            font-size: 12px;
+            font-weight: bold;
+            text-anchor: middle;
+            fill: #333;
+            filter: drop-shadow(0 1px 1px rgba(0,0,0,0.3));
+        }
+        
+        .map-point:hover .map-point-label {
+            opacity: 1;
+        }
+        
+        /* 完全重新设计信息弹窗样式和定位 */
         .map-info {
             display: none;
             position: absolute;
-            background: rgba(255,255,255,0.9);
+            top: 20px;
+            right: 20px;
+            width: 280px;
+            background: rgba(255,255,255,0.95);
             border-radius: 5px;
-            padding: 10px;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
-            max-width: 250px;
+            padding: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             z-index: 10;
+            border-left: 4px solid #28a745;
+            transition: all 0.3s ease;
+            opacity: 0;
+            transform: translateY(-10px);
         }
         
         .map-info.active {
             display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .map-info.locked {
+            border-left-color: #dc3545;
+            box-shadow: 0 5px 20px rgba(220,53,69,0.3);
+        }
+        
+        .map-info .info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .map-info .info-footer {
+            margin-top: 10px;
+            font-size: 12px;
+            text-align: center;
+            color: #6c757d;
+        }
+        
+        .map-info h5 {
+            margin-bottom: 0;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .map-info p {
+            margin-bottom: 0;
+            color: #555;
+            line-height: 1.5;
+        }
+        
+        .info-close {
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+        
+        .info-close:hover {
+            opacity: 1;
         }
         
         .map-legend {
-            background: rgba(255,255,255,0.9);
+            background: rgba(255,255,255,0.95);
             border-radius: 5px;
             padding: 15px;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.15);
             position: absolute;
             bottom: 20px;
             right: 20px;
-            max-width: 200px;
+            max-width: 220px;
             z-index: 5;
+            max-height: 400px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            border: 1px solid #28a745;
+        }
+        
+        .map-legend h6 {
+            font-weight: 600;
+            margin-bottom: 12px;
+            text-align: center;
+            color: #333;
         }
         
         .legend-item {
@@ -70,19 +183,60 @@
         .legend-color {
             width: 15px;
             height: 15px;
-            margin-right: 8px;
+            margin-right: 10px;
             border-radius: 3px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
         
         .download-section {
             margin: 2rem 0;
         }
+        
+        /* 新增点击高亮状态 */
+        .map-point.active circle {
+            stroke: #dc3545;
+            stroke-width: 3;
+            stroke-dasharray: none;
+            filter: drop-shadow(0 0 5px rgba(220,53,69,0.6));
+        }
 
         @media (max-width: 768px) {
             .map-legend {
                 position: static;
-                margin-top: 15px;
+                margin: 15px auto;
                 max-width: 100%;
+                max-height: 200px;
+            }
+            
+            .map-info {
+                width: calc(100% - 40px);
+                top: auto;
+                right: auto;
+                bottom: 20px;
+                left: 20px;
+                max-width: 400px;
+                margin: 0 auto;
+            }
+            
+            .map-point-label {
+                display: none; /* 在移动端隐藏标签，避免拥挤 */
+            }
+            
+            .map-container {
+                aspect-ratio: 4/5; /* 移动端更适合的比例 */
+            }
+            
+            .map-title-box {
+                max-width: 80%;
+                left: 10px;
+                top: 10px;
+            }
+        }
+        
+        /* 为移动端提供地图点更大的触摸区域 */
+        @media (max-width: 576px) {
+            .map-point circle {
+                r: 18; /* 增大点的半径，便于触摸 */
             }
         }
     </style>
@@ -118,9 +272,6 @@
                         <li class="nav-item">
                             <a class="nav-link" href="postcard.html">明信片生成</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="districts.html">区县风光</a>
-                        </li>
                     </ul>
                 </div>
             </div>
@@ -139,55 +290,120 @@
                 </div>
                 
                 <div class="map-container">
+                    <!-- 地图标题 -->
+                    <div class="map-title-box">
+                        <h4>宜春市旅游地图</h4>
+                    </div>
+                    
                     <!-- 手绘地图 SVG -->
-                    <svg class="map-svg" viewBox="0 0 1000 800" xmlns="http://www.w3.org/2000/svg">
+                    <svg class="map-svg" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
                         <!-- 背景 -->
                         <rect width="1000" height="800" fill="#e8f4ea" />
                         
-                        <!-- 山脉和地形 -->
-                        <path d="M100,600 Q250,400 400,550 Q550,300 700,500 Q850,350 950,600 L950,800 L100,800 Z" fill="#c3e6cb" />
-                        <path d="M50,650 Q200,500 350,600 Q500,400 650,550 Q800,450 900,650 L900,800 L50,800 Z" fill="#a3d7af" />
+                        <!-- 宜春市边界 - 调整为封闭曲线 -->
+                        <path class="map-boundary" d="M100,100 Q250,50 400,80 Q600,50 800,100 Q950,200 950,400 Q950,600 800,700 Q600,750 400,730 Q200,750 100,650 Q50,450 100,100 Z" stroke="#007bff" stroke-width="4" fill="none" stroke-dasharray="10, 5" />
                         
-                        <!-- 水系 -->
-                        <path class="water-flow" d="M300,100 Q400,150 350,250 Q300,350 400,400 Q500,450 450,550 Q400,650 500,700 L500,800 L200,800 L200,150 Z" fill="#a8d8ff" />
+                        <!-- 行政区标识 - 使用相对定位 -->
+                        <text x="300" y="230" fill="#495057" font-size="14" font-weight="bold" text-anchor="middle">靖安县</text>
+                        <text x="450" y="130" fill="#495057" font-size="14" font-weight="bold" text-anchor="middle">奉新县</text>
+                        <text x="700" y="180" fill="#495057" font-size="14" font-weight="bold" text-anchor="middle">上高县</text>
+                        <text x="800" y="330" fill="#495057" font-size="14" font-weight="bold" text-anchor="middle">万载县</text>
+                        <text x="600" y="520" fill="#495057" font-size="14" font-weight="bold" text-anchor="middle">樟树市</text>
+                        <text x="350" y="470" fill="#495057" font-size="14" font-weight="bold" text-anchor="middle">丰城市</text>
+                        <text x="200" y="330" fill="#495057" font-size="14" font-weight="bold" text-anchor="middle">铜鼓县</text>
+                        <text x="500" y="320" fill="#495057" font-size="16" font-weight="bold" text-anchor="middle">袁州区</text>
                         
-                        <!-- 城市和道路 -->
-                        <circle cx="500" cy="300" r="40" fill="#f8d7da" stroke="#e77681" stroke-width="2" />
-                        <text x="500" y="305" text-anchor="middle" fill="#721c24" font-size="14" font-weight="bold">宜春市</text>
+                        <!-- 地形特征 - 山脉 -->
+                        <path d="M150,200 Q200,150 250,190 Q300,150 350,200 Q380,150 420,180" fill="none" stroke="#a3d7af" stroke-width="3" />
+                        <path d="M700,150 Q750,120 780,150 Q820,110 850,160" fill="none" stroke="#a3d7af" stroke-width="3" />
+                        <path d="M100,400 Q150,350 200,380 Q250,330 300,370" fill="none" stroke="#a3d7af" stroke-width="3" />
                         
-                        <path d="M500,340 L500,400 L350,550" fill="none" stroke="#6c757d" stroke-width="4" stroke-dasharray="5,5" />
-                        <path d="M500,340 L650,450 L700,500" fill="none" stroke="#6c757d" stroke-width="4" stroke-dasharray="5,5" />
-                        <path d="M500,340 L600,250 L680,200" fill="none" stroke="#6c757d" stroke-width="4" stroke-dasharray="5,5" />
+                        <!-- 水系 - 调整水系路径 -->
+                        <path d="M300,120 Q350,150 320,250 Q280,350 320,450 Q370,500 350,600 L350,700" fill="none" stroke="#a8d8ff" stroke-width="5" />
+                        <path d="M550,120 Q500,220 550,320 Q600,400 550,500 Q500,580 550,650" fill="none" stroke="#a8d8ff" stroke-width="5" />
+                        
+                        <!-- 中心城市 - 宜春市 -->
+                        <circle cx="500" cy="300" r="35" fill="#f8d7da" stroke="#e77681" stroke-width="2" />
+                        <text x="500" y="305" text-anchor="middle" fill="#721c24" font-size="16" font-weight="bold">宜春市</text>
+                        
+                        <!-- 主要道路 - 清晰标记主要道路 -->
+                        <path d="M500,335 L500,400 L350,550" fill="none" stroke="#6c757d" stroke-width="3" />
+                        <path d="M500,335 L650,450 L700,500" fill="none" stroke="#6c757d" stroke-width="3" />
+                        <path d="M500,335 L600,250 L680,200" fill="none" stroke="#6c757d" stroke-width="3" />
+                        <path d="M500,335 L400,230 L320,180" fill="none" stroke="#6c757d" stroke-width="3" />
+                        <path d="M500,335 L700,320 L800,250" fill="none" stroke="#6c757d" stroke-width="3" />
+                        <path d="M500,335 L550,480 L580,600" fill="none" stroke="#6c757d" stroke-width="3" />
+                        <path d="M500,335 L300,450 L200,500" fill="none" stroke="#6c757d" stroke-width="3" />
                         
                         <!-- 景点标记 -->
                         <!-- 明月山 -->
                         <g class="map-point" data-name="明月山" data-info="国家5A级景区，素有'江南第一仙山'之称，以奇特的石林地貌和丰富的生物资源闻名。">
                             <circle cx="680" cy="200" r="15" fill="#28a745" />
                             <text x="680" y="205" text-anchor="middle" fill="white" font-size="12">山</text>
+                            <text class="map-point-label" x="680" y="180" text-anchor="middle">明月山</text>
                         </g>
                         
                         <!-- 温汤温泉 -->
                         <g class="map-point" data-name="温汤温泉" data-info="千年古泉，素有'天下第七泉'之称，具有很高的医疗保健价值。每年冬季是最佳泡汤时节。">
                             <circle cx="700" cy="500" r="15" fill="#17a2b8" />
                             <text x="700" y="505" text-anchor="middle" fill="white" font-size="12">泉</text>
+                            <text class="map-point-label" x="700" y="480" text-anchor="middle">温汤温泉</text>
                         </g>
                         
                         <!-- 袁山公园 -->
                         <g class="map-point" data-name="袁山公园" data-info="宜春市区最大的城市公园，四季景色宜人，是市民休闲游玩的好去处。特别是秋季，满园红叶，景色迷人。">
                             <circle cx="350" cy="550" r="15" fill="#28a745" />
                             <text x="350" y="555" text-anchor="middle" fill="white" font-size="12">园</text>
+                            <text class="map-point-label" x="350" y="530" text-anchor="middle">袁山公园</text>
                         </g>
                         
                         <!-- 宜春博物馆 -->
                         <g class="map-point" data-name="宜春博物馆" data-info="收藏了大量宜春地区的历史文物，展示了宜春悠久的历史文化，是了解宜春历史的重要场所。">
                             <circle cx="480" cy="350" r="15" fill="#6f42c1" />
                             <text x="480" y="355" text-anchor="middle" fill="white" font-size="12">博</text>
+                            <text class="map-point-label" x="480" y="330" text-anchor="middle">宜春博物馆</text>
                         </g>
                         
                         <!-- 龙宫风景区 -->
                         <g class="map-point" data-name="龙宫风景区" data-info="位于明月山腹地，集山、水、洞、瀑布于一体，是夏季避暑的好去处。">
                             <circle cx="600" cy="250" r="15" fill="#28a745" />
                             <text x="600" y="255" text-anchor="middle" fill="white" font-size="12">龙</text>
+                            <text class="map-point-label" x="600" y="230" text-anchor="middle">龙宫风景区</text>
+                        </g>
+                        
+                        <!-- 百丈山 -->
+                        <g class="map-point" data-name="百丈山" data-info="位于靖安县，是禅宗"百丈清规"的发源地，风景秀美，寺庙古朴，是宗教文化旅游的重要景点。">
+                            <circle cx="320" cy="180" r="15" fill="#28a745" />
+                            <text x="320" y="185" text-anchor="middle" fill="white" font-size="12">禅</text>
+                            <text class="map-point-label" x="320" y="160" text-anchor="middle">百丈山</text>
+                        </g>
+                        
+                        <!-- 万载古城 -->
+                        <g class="map-point" data-name="万载古城" data-info="历史悠久的古城，保存了众多明清时期的古建筑，古街古巷交织，体现了传统赣西北建筑风格。">
+                            <circle cx="800" cy="250" r="15" fill="#fd7e14" />
+                            <text x="800" y="255" text-anchor="middle" fill="white" font-size="12">古</text>
+                            <text class="map-point-label" x="800" y="230" text-anchor="middle">万载古城</text>
+                        </g>
+                        
+                        <!-- 铜鼓竹海 -->
+                        <g class="map-point" data-name="铜鼓竹海" data-info="铜鼓县的标志性景观，大面积的竹林形成了壮观的竹海景象，是竹编工艺的原材料产地。">
+                            <circle cx="200" cy="500" r="15" fill="#28a745" />
+                            <text x="200" y="505" text-anchor="middle" fill="white" font-size="12">竹</text>
+                            <text class="map-point-label" x="200" y="480" text-anchor="middle">铜鼓竹海</text>
+                        </g>
+                        
+                        <!-- 樟树药市 -->
+                        <g class="map-point" data-name="樟树药市" data-info="中国四大药材市场之一，历史悠久，是了解中国传统医药文化的重要场所。">
+                            <circle cx="580" cy="600" r="15" fill="#fd7e14" />
+                            <text x="580" y="605" text-anchor="middle" fill="white" font-size="12">药</text>
+                            <text class="map-point-label" x="580" y="580" text-anchor="middle">樟树药市</text>
+                        </g>
+                        
+                        <!-- 月亮湾湿地公园 -->
+                        <g class="map-point" data-name="月亮湾湿地公园" data-info="位于袁州区，是宜春市重要的生态湿地，鸟类众多，是观鸟和生态旅游的好去处。">
+                            <circle cx="400" cy="470" r="15" fill="#20c997" />
+                            <text x="400" y="475" text-anchor="middle" fill="white" font-size="12">湿</text>
+                            <text class="map-point-label" x="400" y="450" text-anchor="middle">月亮湾湿地公园</text>
                         </g>
                         
                         <!-- 公共设施标记 -->
@@ -202,6 +418,11 @@
                             <text x="690" y="545" text-anchor="middle" fill="white" font-size="12">P</text>
                         </g>
                         
+                        <g>
+                            <rect x="330" y="580" width="20" height="20" fill="#6c757d" />
+                            <text x="340" y="595" text-anchor="middle" fill="white" font-size="12">P</text>
+                        </g>
+                        
                         <!-- 厕所 -->
                         <g>
                             <rect x="700" y="220" width="20" height="20" fill="#dc3545" />
@@ -211,6 +432,11 @@
                         <g>
                             <rect x="720" y="500" width="20" height="20" fill="#dc3545" />
                             <text x="730" y="515" text-anchor="middle" fill="white" font-size="12">厕</text>
+                        </g>
+                        
+                        <g>
+                            <rect x="360" y="550" width="20" height="20" fill="#dc3545" />
+                            <text x="370" y="565" text-anchor="middle" fill="white" font-size="12">厕</text>
                         </g>
                         
                         <!-- 信息点 -->
@@ -223,12 +449,54 @@
                             <circle cx="690" cy="500" r="8" fill="#007bff" />
                             <text x="690" y="504" text-anchor="middle" fill="white" font-size="12">i</text>
                         </g>
+                        
+                        <g>
+                            <circle cx="340" cy="550" r="8" fill="#007bff" />
+                            <text x="340" y="554" text-anchor="middle" fill="white" font-size="12">i</text>
+                        </g>
+                        
+                        <!-- 餐饮标记 -->
+                        <g>
+                            <rect x="650" y="270" width="20" height="20" fill="#ffc107" rx="3" />
+                            <text x="660" y="285" text-anchor="middle" fill="#212529" font-size="12">餐</text>
+                        </g>
+                        
+                        <g>
+                            <rect x="670" y="550" width="20" height="20" fill="#ffc107" rx="3" />
+                            <text x="680" y="565" text-anchor="middle" fill="#212529" font-size="12">餐</text>
+                        </g>
+                        
+                        <!-- 住宿标记 -->
+                        <g>
+                            <rect x="630" y="240" width="20" height="20" fill="#ff9800" rx="3" />
+                            <text x="640" y="255" text-anchor="middle" fill="white" font-size="12">住</text>
+                        </g>
+                        
+                        <g>
+                            <rect x="650" y="520" width="20" height="20" fill="#ff9800" rx="3" />
+                            <text x="660" y="535" text-anchor="middle" fill="white" font-size="12">住</text>
+                        </g>
+                        
+                        <!-- 购物标记 -->
+                        <g>
+                            <rect x="620" y="280" width="20" height="20" fill="#e83e8c" rx="3" />
+                            <text x="630" y="295" text-anchor="middle" fill="white" font-size="12">购</text>
+                        </g>
+                        
+                        <!-- 图例标题 -->
+                        <text x="900" y="580" font-weight="bold" fill="#333" font-size="14">图例说明</text>
                     </svg>
                     
                     <!-- 地图信息弹窗 -->
                     <div class="map-info" id="mapInfo">
-                        <h5 id="infoTitle">景点名称</h5>
+                        <div class="info-header">
+                            <h5 id="infoTitle">景点名称</h5>
+                            <button type="button" class="btn-close btn-sm info-close" aria-label="关闭"></button>
+                        </div>
                         <p id="infoContent">景点描述</p>
+                        <div class="info-footer">
+                            <small class="text-muted">点击景点可以锁定/解锁信息框</small>
+                        </div>
                     </div>
                     
                     <!-- 地图图例 -->
@@ -247,12 +515,36 @@
                             <span>文化场所</span>
                         </div>
                         <div class="legend-item">
+                            <div class="legend-color" style="background-color: #fd7e14;"></div>
+                            <span>历史古迹</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #20c997;"></div>
+                            <span>湿地公园</span>
+                        </div>
+                        <div class="legend-item">
                             <div class="legend-color" style="background-color: #6c757d;"></div>
                             <span>停车场</span>
                         </div>
                         <div class="legend-item">
                             <div class="legend-color" style="background-color: #dc3545;"></div>
                             <span>厕所</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #007bff;"></div>
+                            <span>信息点</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #ffc107;"></div>
+                            <span>餐饮</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #ff9800;"></div>
+                            <span>住宿</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #e83e8c;"></div>
+                            <span>购物</span>
                         </div>
                     </div>
                 </div>
@@ -361,43 +653,144 @@
             const mapInfo = document.getElementById('mapInfo');
             const infoTitle = document.getElementById('infoTitle');
             const infoContent = document.getElementById('infoContent');
+            const mapContainer = document.querySelector('.map-container');
             
-            // 为每个景点添加点击事件
+            // 状态变量
+            let isInfoVisible = false;
+            let currentPoint = null;
+            let isInfoLocked = false;
+            
+            // 检测是否为触摸设备
+            const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            
+            // 为每个景点添加点击和键盘事件
             mapPoints.forEach(point => {
-                point.addEventListener('click', function(e) {
-                    // 获取景点信息
-                    const name = this.getAttribute('data-name');
-                    const info = this.getAttribute('data-info');
+                // 使SVG元素可聚焦，增强可访问性
+                point.setAttribute('tabindex', '0');
+                point.setAttribute('role', 'button');
+                point.setAttribute('aria-label', point.getAttribute('data-name'));
+                
+                if (!isTouchDevice) {
+                    // 在非触摸设备上使用悬停效果
+                    // 鼠标悬停显示信息
+                    point.addEventListener('mouseenter', function(e) {
+                        if (!isInfoLocked) {
+                            showPointInfo(this);
+                        }
+                    });
                     
-                    // 更新信息面板
-                    infoTitle.textContent = name;
-                    infoContent.textContent = info;
+                    // 鼠标离开时如果没有锁定则隐藏
+                    point.addEventListener('mouseleave', function() {
+                        if (!isInfoLocked) {
+                            hidePointInfo();
+                        }
+                    });
+                }
+                
+                // 点击/触摸锁定/解锁信息
+                point.addEventListener(isTouchDevice ? 'touchstart' : 'click', function(e) {
+                    if (isTouchDevice) {
+                        e.preventDefault(); // 防止触摸设备上的双重事件
+                    }
                     
-                    // 计算位置并显示信息面板
-                    const pointRect = this.getBoundingClientRect();
-                    const mapContainer = document.querySelector('.map-container');
-                    const containerRect = mapContainer.getBoundingClientRect();
+                    if (currentPoint === this && isInfoLocked) {
+                        hidePointInfo();
+                        isInfoLocked = false;
+                    } else {
+                        showPointInfo(this, true);
+                        isInfoLocked = true;
+                    }
                     
-                    // 相对于地图容器定位
-                    mapInfo.style.left = (pointRect.left - containerRect.left + 30) + 'px';
-                    mapInfo.style.top = (pointRect.top - containerRect.top - 20) + 'px';
-                    
-                    // 显示信息
-                    mapInfo.classList.add('active');
-                    
-                    // 阻止冒泡
+                    // 移除之前的活跃状态
+                    mapPoints.forEach(p => p.classList.remove('active'));
+                    // 添加高亮状态
+                    this.classList.add('active');
                     e.stopPropagation();
+                });
+                
+                // 键盘支持 - 按Enter键等同于点击
+                point.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        this.click();
+                    }
                 });
             });
             
-            // 点击地图外区域关闭信息面板
-            document.addEventListener('click', function() {
-                mapInfo.classList.remove('active');
+            // 显示景点信息
+            function showPointInfo(point, lock = false) {
+                // 获取景点信息
+                const name = point.getAttribute('data-name');
+                const info = point.getAttribute('data-info');
+                
+                // 更新信息面板
+                infoTitle.textContent = name;
+                infoContent.textContent = info;
+                
+                // 不再计算动态位置，使用CSS中固定的位置
+                
+                // 显示信息
+                mapInfo.classList.add('active');
+                isInfoVisible = true;
+                currentPoint = point;
+                
+                // 读取辅助功能用户的屏幕阅读器
+                point.setAttribute('aria-expanded', 'true');
+                
+                // 锁定状态
+                if (lock) {
+                    mapInfo.classList.add('locked');
+                    isInfoLocked = true;
+                } else {
+                    mapInfo.classList.remove('locked');
+                    isInfoLocked = false;
+                }
+            }
+            
+            // 隐藏景点信息
+            function hidePointInfo() {
+                mapInfo.classList.remove('active', 'locked');
+                isInfoVisible = false;
+                isInfoLocked = false;
+                
+                if (currentPoint) {
+                    currentPoint.setAttribute('aria-expanded', 'false');
+                }
+                
+                currentPoint = null;
+                // 移除所有高亮状态
+                mapPoints.forEach(p => p.classList.remove('active'));
+            }
+            
+            // 点击/触摸地图外区域关闭信息面板
+            document.addEventListener(isTouchDevice ? 'touchstart' : 'click', function(e) {
+                // 确保只处理直接在 document 上的事件，避免冒泡引起的问题
+                if (e.target === document.documentElement || e.target === document.body) {
+                    hidePointInfo();
+                }
             });
             
             // 防止点击信息面板时关闭
-            mapInfo.addEventListener('click', function(e) {
+            mapInfo.addEventListener(isTouchDevice ? 'touchstart' : 'click', function(e) {
                 e.stopPropagation();
+            });
+            
+            // 添加关闭按钮事件
+            const infoCloseBtn = document.querySelector('.info-close');
+            if (infoCloseBtn) {
+                infoCloseBtn.addEventListener(isTouchDevice ? 'touchstart' : 'click', function(e) {
+                    if (isTouchDevice) {
+                        e.preventDefault();
+                    }
+                    hidePointInfo();
+                });
+            }
+            
+            // 键盘用户的Esc键支持，按Esc可关闭
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && isInfoVisible) {
+                    hidePointInfo();
+                }
             });
         });
     </script>

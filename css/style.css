@@ -185,3 +185,317 @@ hr {
         height: 180px;
     }
 } 
+
+/* 区县页面样式 */
+/* Chinese Title Styling */
+.chinese-title {
+    position: relative;
+    text-align: center;
+    padding: 2rem 0;
+    margin-bottom: 3rem;
+}
+
+.chinese-title h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: #2c3e50;
+    letter-spacing: 1px;
+}
+
+.chinese-title::before,
+.chinese-title::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 200px;
+    height: 1px;
+    background-color: #bdc3c7;
+    opacity: 0.7;
+}
+
+.chinese-title::before {
+    left: 50%;
+    transform: translateX(-100%) translateX(-120px);
+}
+
+.chinese-title::after {
+    right: 50%;
+    transform: translateX(100%) translateX(120px);
+}
+
+/* 区县展示区样式 */
+.district-showcase {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.07);
+    padding: 2rem;
+    margin-bottom: 2rem;
+    transition: all 0.3s ease-out;
+    min-height: 500px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.district-showcase h3 {
+    color: #3498db;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 0.8rem;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+}
+
+.district-showcase p {
+    font-size: 0.95rem;
+    color: #555;
+}
+
+.district-sections > div {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.07);
+    padding: 0;
+    display: none;
+    overflow: hidden;
+    min-height: 500px;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.district-sections > div.active {
+    display: flex;
+    flex-direction: column;
+}
+
+.district-image {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    border-bottom: 1px solid #eee;
+    transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.district-image:hover {
+    transform: scale(1.03);
+    filter: brightness(1.05);
+}
+
+.district-info {
+    padding: 1.5rem 2rem 2rem 2rem;
+    background-color: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    margin-top: 0;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.district-info h3 {
+    color: #3498db;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+}
+
+.district-info p {
+    font-size: 0.9rem;
+    color: #444;
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+}
+
+.district-info .btn {
+    background-color: #3498db;
+    border-color: #3498db;
+    color: white;
+    font-weight: 500;
+    padding: 0.5rem 1.2rem;
+    border-radius: 20px;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    align-self: flex-start;
+}
+
+.district-info .btn:hover {
+    background-color: #2980b9;
+    border-color: #2980b9;
+    transform: translateY(-2px);
+}
+
+/* 地图容器样式 */
+.map-container {
+    height: 500px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.07);
+    padding: 1rem;
+    position: relative;
+    overflow: hidden;
+}
+
+#yichun-district-map {
+    width: 100%;
+    height: 100%;
+}
+
+/* SVG 路径样式 */
+.district-path {
+    stroke: #a0a0a0;
+    stroke-width: 1;
+    transition: fill 0.2s ease-in-out, stroke 0.2s ease-in-out, stroke-width 0.2s ease-in-out, filter 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+/* 各区县颜色设置 */
+[data-district="yuanzhou"] {
+    fill: #88d498; /* 袁州区 - 翠绿色 */
+}
+
+[data-district="gaoan"] {
+    fill: #c6dabf; /* 高安市 - 淡绿色 */
+}
+
+[data-district="fengxin"] {
+    fill: #fff1ac; /* 奉新县 - 淡黄色 */
+}
+
+[data-district="wanzai"] {
+    fill: #ffd3b6; /* 万载县 - 橙色 */
+}
+
+[data-district="shanggao"] {
+    fill: #daeed1; /* 上高县 - 淡绿色 */
+}
+
+[data-district="yifeng"] {
+    fill: #a8e6cf; /* 宜丰县 - 薄荷绿 */
+}
+
+[data-district="jingan"] {
+    fill: #ffaaa5; /* 靖安县 - 粉红色 */
+}
+
+[data-district="tonggu"] {
+    fill: #ffd8a6; /* 铜鼓县 - 橙黄色 */
+}
+
+[data-district="fengcheng"] {
+    fill: #dcedc1; /* 丰城市 - 淡黄绿色 */
+}
+
+[data-district="zhangshu"] {
+    fill: #cadefc; /* 樟树市 - 淡蓝色 */
+}
+
+.district-path:hover {
+    fill: #7fc77f !important;
+    transform: translateY(-5px);
+    filter: drop-shadow(0 5px 5px rgba(0,0,0,0.2));
+    z-index: 10;
+    stroke-width: 3;
+    stroke: #2c3e50;
+}
+
+/* 区县标签样式 */
+.district-label {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    fill: #333;
+    pointer-events: none;
+    text-anchor: middle;
+    dominant-baseline: middle;
+}
+
+/* 模态窗口样式 */
+.district-modal .modal-content {
+    border-radius: 10px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+}
+
+.district-modal .modal-header {
+    background-color: #3498db;
+    color: white;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+}
+
+.district-modal .modal-header .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+.district-modal .modal-title {
+    font-weight: 600;
+}
+
+.district-modal .modal-body img {
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    width: 100%;
+}
+
+/* 底部文本样式 */
+.mt-4 h4 {
+    color: #2c3e50;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.mt-4 p {
+    color: #555;
+    font-size: 0.9rem;
+}
+
+/* 地图加载失败样式 */
+#map-fallback {
+    border: 1px dashed #ccc;
+    padding: 20px;
+    text-align: center;
+}
+
+#map-fallback h4 {
+    color: #777;
+}
+
+/* 响应式调整 */
+@media (max-width: 992px) {
+    .map-container {
+        margin-top: 2rem;
+    }
+    
+    .district-showcase, .district-sections > div {
+        min-height: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .chinese-title h1 {
+        font-size: 2.2rem;
+    }
+    
+    .chinese-title::before,
+    .chinese-title::after {
+        width: 100px;
+    }
+    
+    .chinese-title::before {
+        transform: translateX(-100%) translateX(-60px);
+    }
+    
+    .chinese-title::after {
+        transform: translateX(100%) translateX(60px);
+    }
+    
+    .map-container {
+        height: 400px;
+    }
+    
+    .district-info {
+        padding: 1.5rem;
+    }
+} 
